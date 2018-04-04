@@ -1,0 +1,206 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - STL</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<!-- Bootstrap core CSS -->
+		<link href="static/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+		<!-- Custom fonts for this template -->
+		<link href="static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+		<link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+
+		<!-- Custom styles for this template -->
+		<link href="static/css/grayscale.min.css" rel="stylesheet">
+
+		<!-- Bootstrap core JavaScript -->
+		<script src="static/vendor/jquery/jquery.min.js"></script>
+		<script src="static/vendor/popper/popper.min.js"></script>
+		<script src="static/vendor/bootstrap/js/bootstrap.min.js"></script>
+		<!-- Custom scripts for this template -->
+		<script src="static/js/grayscale.min.js"></script>
+
+		<!-- Plugin JavaScript -->
+		<script src="static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+		<script src="static/vendor/jquery/jquery.min.js"></script>
+
+		<script src="static/vendor/three/build/three.js"></script>
+
+		<script src="static/vendor/three/STLLoader.js"></script>
+
+		<script src="static/vendor/three/Detector.js"></script>
+        <style>
+            body {
+				font-family: Monospace;
+				background-color: #000000;
+				margin: 0px;
+				overflow: hidden;
+			}
+			a { color: skyblue }
+			.button { background:#999; color:#eee; padding:0.2em 0.5em; cursor:pointer }
+			.highlight { background:orange; color:#fff; }
+
+		</style>
+		<link href="static/css/custom.css" rel="stylesheet">
+
+	</head>
+	<body>
+
+	<!-- Navigation -->
+		<div class="main_title">
+			<a class="navbar-brand js-scroll-trigger"><img src="static/PyBaDELogoWhiteBorder.svg" width="100%">    PyBaDE</a>
+		</div>
+		<button class="gui btn_collapse" data-target="#collapse_input">R</button>
+		<div class="panel panel-default panel-custom gui collapse_custom " id="collapse_input">
+			<div class="panel-body" >
+				<div class="input-group input_group">
+				  <span class="input-group-addon span-custom">Mach</span>
+				  <input type="text" class="form-control input-custom" id="input_mach" aria-describedby="basic-addon3" value="0.7">
+				</div>
+				<div class="input-group input_group">
+				  <span class="input-group-addon span-custom">P</span>
+				  <input type="text" class="form-control input-custom" id="input_p" aria-describedby="basic-addon3" value="26.456">
+				</div>
+				<div class="input-group input_group">
+				  <span class="input-group-addon span-custom">T</span>
+				  <input type="text" class="form-control input-custom" id="input_t" aria-describedby="basic-addon3" value="223">
+				</div>
+				<div class="input-group input_group">
+				  <span class="input-group-addon span-custom">Gasto</span>
+				  <input type="text" class="form-control input-custom" id="input_mass_flow" aria-describedby="basic-addon3" value="35">
+				</div>
+				<div class="input-group input_group">
+				  <span class="input-group-addon span-custom">P02/P01</span>
+				  <input type="text" class="form-control input-custom" id="input_compr_ratio" aria-describedby="basic-addon3" value="35">
+				</div>
+			</div>
+		</div>
+	<script src="static/js/custom.js"></script>
+	<!--
+		<div class="input-group input_group gui">
+		  <span class="input-group-addon">Mach</span>
+		  <input type="text" class="form-control" id="mach" aria-describedby="basic-addon3" value="0.7">
+		</div>
+	-->
+		<script>
+			if ( ! Detector.webgl ) Detector.addGetWebGLMessage();
+			var container;
+			var hour=0;
+			var minute=0;
+			var showed = false;
+			var camera, cameraTarget, scene, renderer;
+			var sun, moon;
+			init();
+			animate();
+			function init() {
+				container = document.createElement( 'div' );
+				document.body.appendChild( container );
+				camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 200 );
+				camera.position.set( 0, 0, 5 );
+				cameraTarget = new THREE.Vector3( 0, -0.25, 0 );
+				scene = new THREE.Scene();
+				scene.background = new THREE.Color( 0x1C1C1C );
+				//scene.fog = new THREE.Fog( 0x72645b, 2, 15 );
+				// Ground
+				var plane = new THREE.Mesh(
+					new THREE.PlaneBufferGeometry( 40, 40 ),
+					new THREE.MeshPhongMaterial( { color: 0x999999, specular: 0x101010 } )
+				);
+				plane.rotation.x = -Math.PI/2;
+				plane.position.y = -0.5;
+				plane.position.z = 23;
+				//scene.add( plane );
+				plane.receiveShadow = true;
+				//sky Dome
+				var skyGeo = new THREE.SphereGeometry(100, 25, 25);
+				var texture_loader = new THREE.TextureLoader();
+				var texture=texture_loader.load("static/texture2.jpg");
+				var material = new THREE.MeshPhongMaterial({
+						map: texture
+				});
+				var sky = new THREE.Mesh(skyGeo, material);
+				sky.position.set(0,0,0);
+				sky.material.side = THREE.BackSide;
+				//scene.add(sky);
+				// Sun and moon
+				var sphere = new THREE.SphereGeometry( 0.2, 16, 15 );
+				sun = new THREE.PointLight( 0xffffff, 2.5, 100,2 );
+				sun.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xFF8000 } ) ) );
+				sun.position.set(15, -6.5, -20);
+				scene.add( sun );
+
+
+
+				moon = new THREE.PointLight( 0xE6E6E6, 1, 100 );
+				moon.add( new THREE.Mesh( sphere, new THREE.MeshBasicMaterial( { color: 0xE6E6E6 } ) ) );
+				moon.position.set(-15, -6.5, -20);
+				scene.add( moon );
+				// ASCII file
+				var loader = new THREE.STLLoader();
+				loader.load( 'static/R_1.stl', function ( geometry ) {
+					var material = new THREE.MeshPhongMaterial( { color: 0xBCC6CC,
+																shininess: 0,
+																metal: true,
+																wrapAround: true,
+																shading: THREE.FlatShading } );
+					var mesh = new THREE.Mesh( geometry, material );
+					mesh.position.set( 0, - 1, 0.6 );
+					mesh.rotation.set( -Math.PI/2, 0, 0 );
+					mesh.scale.set( 0.002, 0.002, 0.002 );
+					mesh.castShadow = true;
+					mesh.receiveShadow = true;
+					scene.add( mesh );
+				} );
+				// Lights
+				scene.add( new THREE.HemisphereLight( 0x6E6E6E, 0x111122 ) );
+
+				// renderer
+				renderer = new THREE.WebGLRenderer( { antialias: true } );
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( window.innerWidth, window.innerHeight );
+				renderer.gammaInput = true;
+				renderer.gammaOutput = true;
+				renderer.shadowMap.enabled = true;
+				renderer.shadowMap.renderReverseSided = false;
+				renderer.domElement.setAttribute('style', 'z-index: 0');
+				container.appendChild( renderer.domElement );
+				window.addEventListener( 'resize', onWindowResize, false );
+			}
+			function addShadowedLight( x, y, z, color, intensity ) {
+				var directionalLight = new THREE.DirectionalLight( color, intensity );
+				directionalLight.position.set( x, y, z );
+				scene.add( directionalLight );
+				directionalLight.castShadow = true;
+				var d = 1;
+				directionalLight.shadow.camera.left = -d;
+				directionalLight.shadow.camera.right = d;
+				directionalLight.shadow.camera.top = d;
+				directionalLight.shadow.camera.bottom = -d;
+				directionalLight.shadow.camera.near = 1;
+				directionalLight.shadow.camera.far = 4;
+				directionalLight.shadow.mapSize.width = 1024;
+				directionalLight.shadow.mapSize.height = 1024;
+				directionalLight.shadow.bias = -0.005;
+			}
+			function onWindowResize() {
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			}
+			function animate() {
+				requestAnimationFrame( animate );
+				render();
+			}
+			function render() {
+
+				camera.lookAt( cameraTarget );
+				renderer.render( scene, camera );
+			}
+		</script>
+
+	</body>
+</html>

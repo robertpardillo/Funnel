@@ -1,0 +1,56 @@
+.first_column{
+    position: absolute;
+    left: 0;
+    right: 85%;
+    height: 100%;
+}
+.first_column p {
+    margin: 0;
+    color: #FAFAD2;
+}
+#controlSide a {
+    color: #FAFAD2;
+}
+.first_column div{
+    background-color: #2C2C2A;
+}
+.second_column{
+    width: 85%;
+    position: absolute;
+    top:0;
+    left: 15%;
+    height: 100%;
+    z-index: 0;
+}
+.input{
+    background-color: rgba(44, 44, 42,0);
+    border:None;
+    margin-left: 1%;
+    width: 98%;
+    height: 7%;
+    border-radius: 3px;
+    color: #FAFAD2;
+}
+.input:hover{
+    background-color: #CFB53B;
+}
+.input:focus{
+    outline: none;
+    background-color: #ac9a3f;
+}
+.input:focus:hover{
+    background-color: #CFB53B;
+}
+.span1{
+    width: 35%;
+}
+.span2{
+    width: 40%;
+}
+.span3{
+    width: 45%;
+}
+.row1{
+    padding-left: 5%;
+    padding-top: 10%;
+}

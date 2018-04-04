@@ -1,0 +1,255 @@
+<head>
+    <script src="static/vendor/jquery/jquery.min.js"></script>
+    <link rel="stylesheet" href="static/vendor/bootstrap/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="static/vendor/bootstrap/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <link href="static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <script type="text/javascript">
+
+    </script>
+    <style>
+        .input-group-addon{
+            width: 30%;
+            background-color: #f4c025;
+            border-color: #373633;
+            color:  #373633;
+        }
+
+        .btn-danger{
+            background-color: #f4c025;
+            border-color: #f4c025;
+        }
+
+        .input_user{
+            border-color: #373633;
+            color:  #373633;
+        }
+
+        .input-group{
+            width: 100%;
+            height: 100%;
+        }
+
+        #user_pass{
+             position: absolute;
+             top: 45%;
+             left: 38%;
+             width: 30%;
+        }
+        body {
+          background: url(static/session_back3.jpg) no-repeat center center fixed;
+          -webkit-background-size: cover;
+          -moz-background-size: cover;
+          -o-background-size: cover;
+          background-size: cover;
+        }
+        .panel-warning>.panel-heading{
+            background-color:#e4c874;
+        }
+        .session_conf{
+             position: absolute;
+             top: 15%;
+             left: 55%;
+             width: 40%;
+             height: 70%;
+        }
+        .session_name{
+            width: 100%;
+            height: 5%;
+        }
+        .blank{
+            height: 1%;
+        }
+        #info_div{
+            width: 100%;
+            height: 10%
+        }
+        #envLogo {
+            z-index: 1;
+            position: absolute;
+            left: 15%;
+            top: 25%;
+            width: 20%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="envLogo">
+        <img src="static/funnel_only.svg" style="width: 100%">
+    </div>
+    <a class="btn btn-large btn-danger" id="" onclick="change_user()">
+        <i class="fa fa-user" aria-hidden="true"></i>
+    </a>
+
+    <div id = "user_pass">
+        <div id="username" class="input-group">
+          <span class="input-group-addon" id="basic-addon1">User</span>
+          <input id = "user" type="text" class="form-control input_user" placeholder="Username" aria-describedby="basic-addon1">
+        </div>
+
+        <div id="password" class="input-group">
+          <span class="input-group-addon">Password</span>
+          <input id="pass" type="password" class="form-control input_user" placeholder="Password" aria-label="Amount (to the nearest dollar)">
+        </div>
+    </div>
+
+    <div id = "session_conf_guest" class="session_conf" style="display:None">
+        <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">Session Configuration</h3>
+        </div>
+            <div class="panel-body">
+                <button type="button" class="btn btn-success">Join Session</button>
+                <div class="blank"></div>
+                <div class="input-group session_name">
+                  <span class="input-group-addon">Session Name</span>
+                  <input type="text" class="form-control input_user" placeholder="Session" aria-describedby="basic-addon1">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id = "session_conf" class="session_conf" style="display:None">
+        <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h3 class="panel-title">Session Configuration</h3>
+        </div>
+            <div class="panel-body">
+                <button type="button" class="btn btn-primary" onclick="new_session()">New Session</button>
+                <button type="button" class="btn btn-success" onclick="continue_session()">Continue Session</button>
+                <div class="blank"></div>
+                <div class="input-group session_name">
+                  <span class="input-group-addon">Session Name</span>
+                  <input type="text" id="session_name_input" class="form-control input_user" placeholder="Session" aria-describedby="basic-addon1">
+                </div>
+                <div class="blank"></div>
+                <div id="algorithm" class="btn-group" data-toggle="buttons">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id = "session_warn" style="display: None">
+        <div class="alert alert-danger" role="alert"> Wrong user or password, please try it again</div>
+    </div>
+    <div id = "session_name_warn" style="display: None">
+        <div class="alert alert-danger" role="alert">Wrong Session name</div>
+    </div>
+    <div id = "session_name_success" style="display: None">
+        <div class="alert alert-danger" role="alert">Loading ...</div>
+    </div>
+    <script src="/static/js/webSocket.js"></script>
+    <script>
+        var _id;
+        function check_user(user) {
+            if (user===1) {
+                show_session_conf();
+            } else if (user===0) {
+                show_session_warn();
+            } else if (user===2) {
+                show_session_guest();
+            } else {
+            }
+        }
+        function id_info(id) {
+            _id = id
+        }
+        function session_check(res) {
+            if (res===1) {
+                $('#session_name_success').css('display', '');
+                setTimeout(function() {
+                    $('#session_name_success').css('display', 'None');
+                    window.location ="http://" + IP + "?id=" + _id;
+                }, 4000);
+            } else if (res===0) {
+                $('#session_name_warn').css('display', '');
+                setTimeout(function() {
+                    $('#session_name_warn').css('display', 'None');
+                }, 4000);
+            } else {
+            }
+        }
+
+        ws = new SWS('session');
+        ws.connect();
+
+        function algorithms(value) {
+            var algorithm = document.getElementById("algorithm");
+
+            for(i=0; i<value.length; i++) {
+                var lab = document.createElement('LABEL');
+                lab.setAttribute('class','algorithms btn btn-primary');
+                var inp = document.createElement('INPUT');
+                inp.setAttribute('type', 'radio');
+                inp.setAttribute('name', 'options');
+                inp.setAttribute('id', 'options'+i.toString());
+                inp.setAttribute('autocomplete','off');
+                lab.textContent = value[i];
+                lab.appendChild(inp);
+                algorithm.appendChild(lab);
+            }
+        }
+
+        function send_user_password() {
+            user = $('#user').val();
+            pass = $('#pass').val();
+
+            message = `{"check_user": ["${user}","${pass}"]}`;
+            ws.send('handler', message);
+            $('#user').val('');
+            $('#pass').val('');
+         }
+
+        function show_session_conf() {
+            $('#user_pass').css('display', 'None');
+            $('#session_conf').css('display', '');
+
+            ws.send('handler',`{"what_algorithms":0}`);
+        }
+        function show_session_warn() {
+            $('#session_warn').css('display', '');
+            setTimeout(function() {
+                $('#session_warn').css('display', 'None');
+            }, 4000);
+
+        }
+
+        function show_session_guest() {
+            $('#user_pass').css('display', 'None');
+            $('#session_conf_guest').css('display', '');
+        }
+        function change_user(){
+            $('#session_conf').css('display', 'None');
+            $('#session_conf_guest').css('display', 'None');
+            $('#user_pass').css('display', '');
+         }
+
+         function new_session() {
+            ses_name = $('#session_name_input').val();
+            algorithm = $('.algorithms[class*="active"]').text();
+            ws.send('handler',`{"new_session": ["${ses_name}","${algorithm}"]}`)
+         }
+        function continue_session(){
+            ses_name = $('#session_name_input').val();
+            ws.send('handler',`{"check_session": "${ses_name}"}`)
+        }
+
+        document.getElementById('user_pass').addEventListener('keyup', function (e) {
+        if (e.keyCode == 13 || e.keyCode==96){
+            send_user_password();
+        }})
+
+        document.getElementById('session_conf').addEventListener('keyup', function (e) {
+        if (e.keyCode == 13 || e.keyCode==96){
+            new_session();
+        }})
+
+        document.getElementById('session_conf_guest').addEventListener('keyup', function (e) {
+        if (e.keyCode == 13 || e.keyCode==96){
+            new_session();
+        }})
+
+    </script>
+
+</body>

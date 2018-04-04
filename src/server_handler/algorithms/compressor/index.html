@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html">
+	<head>
+		<title>Funnel</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+
+		<!-- Bootstrap core CSS -->
+		<link href="/algorithms/compressor/static/css/bootstrap.css" rel="stylesheet">
+
+		<!-- Custom fonts for this template -->
+		<link href="/algorithms/compressor/static/vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+		<link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+		<link href='https://fonts.googleapis.com/css?family=Cabin:700' rel='stylesheet' type='text/css'>
+
+
+		<!-- Bootstrap core JavaScript -->
+		<script src="/algorithms/compressor/static/vendor/jquery/jquery.min.js"></script>
+		<script src="/algorithms/compressor/static/vendor/popper/popper.min.js"></script>
+		<script src="/algorithms/compressor/static/js/bootstrap.min.js"></script>
+
+		<!-- Plugin JavaScript -->
+		<script src="/algorithms/compressor/static/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+		<script src="/algorithms/compressor/static/vendor/jquery/jquery.min.js"></script>
+
+		<!-- Three.js -->
+		<script src="/algorithms/compressor/static/vendor/three/build/three.js"></script>
+
+		<script src="/algorithms/compressor/static/vendor/three/STLLoader.js"></script>
+
+		<script src="/algorithms/compressor/static/vendor/three/Detector.js"></script>
+
+		<script src="/algorithms/compressor/static/vendor/three/OrbitControls.js"></script>
+
+		<!-- Custom css -->
+		<link href="/algorithms/compressor/static/css/custom.css" rel="stylesheet">
+		<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+
+
+	</head>
+	<body>
+
+	<div class="first_column">
+		<div id="MainHeader" style="height: 15%">
+			<p style="align-content: center" id="id_">ID</p>
+			<img src="/algorithms/compressor/static/DIVIDER.svg" width="95%" style="margin-left: 2.5%;">
+		</div>
+		<div id="controlSide" style="height:85%">
+				<button type="button" class="input" onclick="show('presentation')" autofocus>Start</button>
+				<button type="button" class="input" onclick="show('inputs_scene')">Inputs</button>
+				<button type="button" class="input" onclick="show('results_scene')">Results</button>
+		</div>
+	</div>
+	<div class="second_column" >
+		<div id="optionSide">
+			<button type="button" class="btn" id="save_btn"><i class="fa fa-floppy-o fa-2x" ></i></button>
+			<button type="button" class="btn" id="change_alg_btn"><i class="fa fa-refresh fa-2x" aria-hidden="true"></i></button>
+			<button type="button" class="btn" id="change_usr_btn"><i class="fa fa-user fa-2x" aria-hidden="true"></i></i></button>
+		</div>
+		<div id="variableScene" style="width: 100%; height: 92%; background-color: #B4B4B4">
+			<div id="presentation">
+				<div style="margin-left: 35%; padding-top: 10%">
+					<h1>AXIAL COMPRESSOR</h1>
+				</div>
+				<div style="margin-left: 25%; display: inline-block">
+					<p>Powered by</p><h3>Funnel</h3>
+					<img src="/algorithms/compressor/static/funnel_only.svg" width=20%>
+				</div>
+			</div>
+			<div id="results_scene" style="display: None; width: 100%;height: 100%">
+				<a type="button" id="download_button" class="btn btn-success" style="display:None; position: absolute; left: 25%; top:15%;">stl</a>
+				<div id="camber_graf" style="width:600px;height:350px;display: None; position: absolute; left: 25%; top:20%;"></div>
+			</div>
+			<div id="inputs_scene" style="display: None">
+				<div class="col-md-4" style="height: 100%">
+					<div class="row row1">
+						<div class="panel panel-default">
+						  <div class="panel-body">
+							<div class="input-group input">
+							  <span class="input-group-addon span1">Mach</span>
+							  <input type="text" class="form-control input_input" id="input_mach" aria-describedby="basic-addon1" value="0.85"  onfocus="show_help('entrada_help')">
+							</div>
+							<div class="input-group input">
+							  <span class="input-group-addon span1">P</span>
+							  <input type="text" class="form-control input_input" id="input_p" placeholder="KPa" aria-describedby="basic-addon1" value="30" onfocus="show_help('entrada_help')">
+							</div>
+							<div class="input-group input">
+							  <span class="input-group-addon span1">T</span>
+							  <input type="text" class="form-control input_input" id="input_t" placeholder="K" aria-describedby="basic-addon1" value="228" onfocus="show_help('entrada_help')">
+							</div>
+							<div class="input-group input">
+							  <span class="input-group-addon span1">Gasto</span>
+							  <input type="text" class="form-control input_input" id="input_mass_flow" placeholder="Kg/s" aria-describedby="basic-addon1" value="102" onfocus="show_help('entrada_help')">
+							</div>
+							<div class="input-group input">
+							  <span class="input-group-addon span1">P03/P02</span>
+							  <input type="text" class="form-control input_input" id="input_compr_ratio" aria-describedby="basic-addon1" value="35" onfocus="show_help('entrada_help')">
+							</div>
+						  </div>
+						</div>
+					</div>
+					<div class="row" style="padding-left: 5%">
+						<div class="panel panel-default">
+                            <div class="panel-body">
+                                <div class="input-group input">
+                                  <span class="input-group-addon span2">Size</span>
+                                  <input type="text" class="form-control input_input" id="input_size" aria-describedby="basic-addon1" value="1" onfocus="show_help('design_help')">
+                                </div>
+                                <div class="input-group input">
+                                  <span class="input-group-addon span2">Stall</span>
+                                  <input type="text" class="form-control input_input"  id="input_stall" aria-describedby="basic-addon1" value="0.9" onfocus="show_help('design_help')">
+                                </div>
+                                <div class="input-group input">
+                                  <span class="input-group-addon span2">Cost</span>
+                                  <input type="text" class="form-control input_input" id="input_cost" aria-describedby="basic-addon1" value="0.8" onfocus="show_help('design_help')">
+                                </div>
+                                <div class="input-group input">
+                                  <span class="input-group-addon span2">Off-Design</span>
+                                  <input type="text" class="form-control input_input" id="input_off_design" aria-describedby="basic-addon1" value="0.7" onfocus="show_help('design_help')">
+                                </div>
+                            </div>
+                    </div>
+					</div>
+					<div class="row" style="padding-left: 5%">
+						<div class="panel panel-warning">
+							<div class="panel-body">
+								<div class="input-group input">
+									<span class="input-group-addon span3">Streamlines</span>
+									<input type="text" class="form-control input_input" id="input_streamlines" aria-describedby="basic-addon1" value="2" onfocus="show_help('calculus_help')">
+								</div>
+								<div class="input-group input">
+									<span class="input-group-addon span3">Método CFD</span>
+									<input type="text" class="form-control input_input" id="input_method" aria-describedby="basic-addon1" value="rhoCentralFoam" onfocus="show_help('calculus_help')">
+								</div>
+								<div class="input-group input">
+									<span class="input-group-addon span3">Malla</span>
+									<input type="text" class="form-control input_input" id="input_mesh" aria-describedby="basic-addon1" value="0" onfocus="show_help('calculus_help')">
+								</div>
+							</div>
+                    	</div>
+					</div>
+				</div>
+				<div class="col-md-8">
+					<div class="panel panel-default" style="width: 85%; height: 100%; margin-top: 5%; margin-left: 15%">
+						<div class="panel-body" id="explication">
+							<div id="entrada_help" >
+								<div id="plane_animate" style="width: 100%; height: 50%">
+									<object data="/algorithms/compressor/static/plane_animation.svg" style="width: 100%;height: 100%" id="animation" type="image/svg+xml"></object>
+								</div>
+							</div>
+							<div id="design_help" style="display: None">
+								<h1>design HELP</h1>
+							</div>
+							<div id="calculus_help" style="display: None">
+								<h1>calculus HELP</h1>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!--
+		<div class="input-group input_group gui">
+		  <span class="input-group-addon">Mach</span>
+		  <input type="text" class="form-control" id="mach" aria-describedby="basic-addon3" value="0.7">
+		</div>
+	-->
+	<script src="/algorithms/compressor/static/js/objectClass.js"></script>
+	<script src="/static/js/webSocket.js"></script>
+
+
+	<script id="Inputs scene Functions" src="/algorithms/compressor/static/js/inputsFunctions.js"></script>
+	<script id="Three scene load" src="/algorithms/compressor/static/js/threeScene.js"></script>
+	<script id="Communication functions" src="/algorithms/compressor/static/js/comuFunctions.js"></script>
+
+
+
+	<script>
+		setTimeout(function(){
+			ws.send('handler',`{"get_id":[]}`)
+		}, );
+
+	</script>
+	</body>
+</html>

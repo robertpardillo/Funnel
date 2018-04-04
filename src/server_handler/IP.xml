@@ -1,0 +1,15 @@
+<?xml version="2.0" encoding="utf-8"?>
+<servers>
+    <handler>
+        <ip>192.168.43.103:1111</ip>
+    </handler>
+    <model3D>
+        <ip>192.168.43.103:1112</ip>
+    </model3D>
+    <CFD>
+        <ip>192.168.43.103:1113</ip>
+    </CFD>
+    <design>
+        <ip>192.168.43.103:1114</ip>
+    </design>
+</servers>
